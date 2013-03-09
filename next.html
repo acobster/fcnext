@@ -1,0 +1,527 @@
+<html>
+
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <link rel="stylesheet" href="style.css" />
+  
+  <script type="text/javascript" src="jquery.js"></script>
+  
+  <script type="text/javascript">
+    
+    /********************************** THE DATA **********************************/
+
+    var params = {
+      // number of seconds in each chunk, e.g. wait.min = 2*5 = 10s
+      wait: { interval: 5, min: 2, max: 4 },
+      repitition: { odds: 0.5, min: 0, max: 3 },
+      sustain: { odds: 0 },
+      pivot: { odds: 0.7, after: 30*60 } // always pivot after 30 minutes
+    };
+    
+    var chords = {
+      start: {
+        color: "#000",
+        successor: 'a1',
+        img: 'a1.GIF',
+        neverRepeat: true,
+        reps: 0,
+        wait: 2
+      },
+      a1: {
+        color: "#558",
+        successor: 'a2',
+        img: 'a1.GIF'
+      },
+      a2: {
+        color: "#559",
+        successor: 'a3',
+        img: 'a2.GIF'
+      },
+      a3: {
+        color: "#669",
+        successor: 'a4',
+        img: 'a3.GIF'
+      },
+      a4: {
+        color: "#66A",
+        successor: 'a5',
+        img: 'a4.GIF'
+      },
+      a5: {
+        color: "#66B",
+        successor: 'a6',
+        img: 'a5.GIF'
+      },
+      a6: {
+        color: "#66C",
+        successor: 'a7',
+        img: 'a6.GIF',
+        pivot: [ 'b5' ]
+      },
+      a7: {
+        color: "#66D",
+        successor: 'a8',
+        img: 'a7.GIF'
+      },
+      a8: {
+        color: "#66E",
+        successor: 'a1',
+        img: 'a8.GIF'
+      },
+      b1: {
+        color: "#7E7",
+        successor: 'b2',
+        img: 'b1.GIF'
+      },
+      b2: {
+        color: "#7E8",
+        successor: 'b3',
+        img: 'b2.GIF'
+      },
+      b3: {
+        color: "#7D7",
+        successor: 'b4',
+        img: 'b3.GIF'
+      },
+      b4: {
+        color: "#7D8",
+        successor: 'b5',
+        img: 'b4.GIF'
+      },
+      b5: {
+        color: "#7C7",
+        successor: 'b6',
+        img: 'b5.GIF'
+      },
+      b6: {
+        color: "#7C8",
+        successor: 'b7',
+        img: 'b6.GIF'
+      },
+      b7: {
+        color: "#7B7",
+        successor: 'b8',
+        img: 'b7.GIF'
+      },
+      b8: {
+        color: "#7B8",
+        successor: 'b9',
+        img: 'b8.GIF'
+      },
+      b9: {
+        color: "#7A7",
+        successor: 'b10',
+        img: 'b9.GIF',
+        pivot: [ 'c1' ]
+      },
+      b10: {
+        color: "#7A8",
+        successor: 'b1',
+        img: 'b10.GIF',
+        pivot: [ 'a1' ]
+      },
+      c1: {
+        color: "#E72",
+        successor: 'c2',
+        img: 'c1.GIF'
+      },
+      c2: {
+        color: "#D72",
+        successor: 'c3',
+        img: 'c2.GIF'
+      },
+      c3: {
+        color: "#C70",
+        successor: 'c4',
+        img: 'c3.GIF'
+      },
+      c4: {
+        color: "#B70",
+        successor: 'c1',
+        img: 'c4.GIF',
+        pivot: [ 'b1', 'd1' ],
+        after: 45*60 // half an hour
+      },
+      d1: {
+        color: "#E00",
+        successor: 'd2',
+        img: 'd1.GIF'
+      },
+      d2: {
+        color: "#D00",
+        successor: 'd3',
+        img: 'd2.GIF'
+      },
+      d3: {
+        color: "#C00",
+        successor: 'd4',
+        img: 'd3.GIF'
+      },
+      d4: {
+        color: "#B00",
+        successor: 'd5',
+        img: 'd4.GIF'
+      },
+      d5: {
+        color: "#A00",
+        successor: 'd6',
+        img: 'd5.GIF'
+      },
+      d6: {
+        color: "#900",
+        successor: 'd7',
+        img: 'd6.GIF'
+      },
+      d7: {
+        color: "#800",
+        successor: 'd1',
+        img: 'd7.GIF'
+      }
+    };
+    
+    var clock = {};
+    
+    
+    
+    
+    
+    /********************************** RUN THE THING **********************************/
+  
+    $(document).ready( function() {
+      
+      $( '.run' ).click( function() {
+        $( '.run' ).toggle();
+      });
+      
+      $( '.adjust' ).click( function() {
+        $( '.adjust, .screen' ).toggle();
+      });
+
+      $( '#reset' ).click( function() {
+        reset();
+      });
+      
+      $( '#done' ).click( function() {
+        updateParams();
+      });
+      
+      $( '#start' ).click( function() {
+
+        $( '.adjust' ).attr( 'disabled', 'disabled' );
+        $( '#reset' ).attr( 'disabled', 'disabled' );
+        $( '#chord' ).empty();
+
+        var timer = start();
+
+        $( '#stop' ).click( function() {
+          $('.adjust, #reset' ).removeAttr( 'disabled' );
+          clearInterval( timer );
+          timer = null;
+        });
+      });
+
+      $( '#settings input' ).click( function() { $(this).select(); });
+    });
+    
+    
+    
+    
+    
+    /****************************** MAIN RUNTIME FUNCTIONS *******************************/
+    
+    function start() {
+    
+      initClock();
+      
+      var c = chords.start;
+        
+      // Loop forever, getting the next chord and setting wait to a random time
+      return setInterval( function() {
+      
+        // After a certain amount of time, pivot whenever we have the chance
+        if( clock.time > params.pivot.after && params.pivot.odds < 1 ) {
+          params.pivot.odds = 1;
+        }
+      
+        $( '#wait' ).text( c.wait-- );
+        if( c.wait < 0 ) {
+          c = next( c, params );
+          clock.time += c.wait;
+          $('#time span').text( Math.round( clock.time/60 ) );
+          
+          // SUSTAIN?
+          if( c.sustain ) {
+            $('#sustain').text( 'LONG' );
+          } else {
+            $('#sustain').text( 'SHORT' );
+          }
+          
+          if( c.reps > 0 ) {
+            $('#repeat').text( 'REPEAT '+c.reps );
+          } else {
+            $('#repeat').text( '' );
+          }
+          
+          // COLOR
+          $('body').css( 'background-color', c.color );
+          
+          // IMAGE
+          $('#chord').css( 'background-image', 'url("'+c.img+'")' );
+        }
+      }, 10 );
+      
+    }
+    
+    function next( c, params ) {
+      // uncomment to determine approximate time for one run
+      //if( c.successor == 'd3' ) { alert( clock.time ); }
+      
+      // determine next chord
+      
+      if( c.reps > 0 ) {
+        // repeat this chord, decrementing the number of repeats left
+        c.reps--;
+      } else {
+        
+        if( c.pivot ) {
+          
+          var to = 0;
+          
+          // change the pivot of the chord after a certain global time
+          if ( c.after && ( clock.time > c.after ) ) {
+            to++;
+          }
+        
+          var e;
+          e = Math.random() < params.pivot.odds
+            ? c.pivot[to]
+            : c.successor;
+        } else {
+          e = c.successor;
+        }
+        
+        eval( 'c = chords.'+e );
+        
+        // determine how many times we'll repeat this chord
+        c.reps = c.neverRepeat
+          ? 0
+          : Math.floor( ( Math.random() * params.repitition.max ) + 1 );
+      }
+      
+      // sustain
+      c.sustain = Math.random() < params.sustain.odds;
+      
+      // wait
+      c.wait = getWait( params );
+    
+      return c;
+    }
+    
+    function getWait( params ) {
+      var w = 0;
+      while( w < params.wait.min * params.wait.interval ) {
+        w = Math.floor( ( Math.random() * params.wait.max * params.wait.interval ) + 1 );
+      }
+      return w;
+    }
+    
+    function initClock() {
+      $( '#time' ).click( function() { $('#time span').toggle(); });
+      clock.time = 0;
+      $( '#time span' ).html( 'MINS' );
+    }
+    
+    
+    
+    
+    
+    /******************************* CHANGE THE PARAMETERS *******************************/
+    
+    function updateParams() {
+      params = $( '#factors' ).serializeObject();
+    }
+
+    function reset() {
+      initClock();
+      
+      $('body').css( 'background-color', '#333' );
+      $('#chord').css( 'background-image', 'none' );
+
+      $('#wait').html('WAIT');
+      $('#repeat').html('REPEAT');
+      $('#sustain').html('SUSTAIN');
+      $('#chord').html('CHORD');
+    }
+
+
+    /*
+     * http://stackoverflow.com/questions/1184624/convert-form-data-to-js-object-with-jquery
+     * ... thanks to macek
+     */
+    $.fn.serializeObject = function(){
+
+        var self = this,
+            json = {},
+            push_counters = {},
+            patterns = {
+                "validate": /^[a-zA-Z][a-zA-Z0-9_]*(?:\[(?:\d*|[a-zA-Z0-9_]+)\])*$/,
+                "key":      /[a-zA-Z0-9_]+|(?=\[\])/g,
+                "push":     /^$/,
+                "fixed":    /^\d+$/,
+                "named":    /^[a-zA-Z0-9_]+$/
+            };
+
+
+        this.build = function(base, key, value){
+            base[key] = value;
+            return base;
+        };
+
+        this.push_counter = function(key){
+            if(push_counters[key] === undefined){
+                push_counters[key] = 0;
+            }
+            return push_counters[key]++;
+        };
+
+        $.each($(this).serializeArray(), function(){
+
+            // skip invalid keys
+            if(!patterns.validate.test(this.name)){
+                return;
+            }
+
+            var k,
+                keys = this.name.match(patterns.key),
+                merge = this.value,
+                reverse_key = this.name;
+
+            while((k = keys.pop()) !== undefined){
+
+                // adjust reverse_key
+                reverse_key = reverse_key.replace(new RegExp("\\[" + k + "\\]$"), '');
+
+                // push
+                if(k.match(patterns.push)){
+                    merge = self.build([], self.push_counter(reverse_key), merge);
+                }
+
+                // fixed
+                else if(k.match(patterns.fixed)){
+                    merge = self.build([], k, merge);
+                }
+
+                // named
+                else if(k.match(patterns.named)){
+                    merge = self.build({}, k, merge);
+                }
+            }
+
+            json = $.extend(true, json, merge);
+        });
+
+        return json;
+    };
+  
+  </script>
+
+</head>
+
+<body>
+
+  <p>Next...</p>
+  
+  <div id="control">
+    <p id="time">+<span>MINS</span></p>
+    <p>
+      <button id="start" type="button" class="run">Start</button>
+      <button id="stop" type="button" class="run" style="display:none;">Stop</button>
+    </p>
+    <p>
+      <button id="edit" type="button" class="adjust">Adjust</button>
+      <button id="done" type="button" class="adjust" style="display:none;">Done</button>
+    </p>
+    <p>
+      <button id="reset" type="button">Reset</button>
+    </p>
+  </div>
+
+  <div id="main" class="screen" style="display:none;">
+    <div id="random">
+      <div id="wait">WAIT</div>
+      <div id="repeat">REPEAT</div>
+      <div id="sustain">SUSTAIN</div>
+    </div>
+    <div id="chord">CHORD</div>
+  </div>
+  
+  <div id="settings" class="screen">
+    <form id="factors">
+      <fieldset>
+        <legend>Wait Times</legend>
+        <p>
+          <label for="interval">Interval</label>
+          <input id="interval" name="wait[interval]" value="5"
+            title="Interval to count by, in seconds" />
+        </p>
+        <p>
+          <label for="minSeconds">Minimum</label>
+          <input id="minSeconds" name="wait[min]" value="10"
+            title="Minimum number of seconds" />
+        </p>
+        <p>
+          <label for="maxSeconds">Maximum</label>
+          <input id="maxSeconds" value="20" name="wait[max]"
+            title="Maximum number of seconds" />
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Repitition</legend>
+        <p>
+          <label for="repeatOdds">Odds</label>
+          <input id="repeatOdds" value="0.8" name="repitition[odds]"
+            title="Odds in 1 that this chord will repeat" />
+        </p>
+        <p>
+          <label for="minRepeats">Minimum</label>
+          <input id="minRepeats" value="10" name="repitition[min]"
+            title="Minimum number of repeats" />
+        </p>
+        <p>
+          <label for="maxRepeats">Maximum</label>
+          <input id="maxRepeats" value="20" name="repitition[max]"
+            title="Maximum number of repeats" />
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sustain</legend>
+        <p>
+          <label for="sustainOdds">Odds</label>
+          <input id="sustainOdds" value="0" name="sustain[odds]"
+            title="Odds in 1 that the given chord will sustain" />
+        </p>
+      </fieldset>
+
+      <fieldset id="pivotFactors">
+        <legend>Pivoting</legend>
+        <p>
+          <label for="pivotOdds">Odds</label>
+          <input id="pivotOdds" value="0.7" name="pivot[odds]"
+            title="Odds in 1 that the given chord will pivot" />
+        </p>
+        <p>Always pivot after
+          <input id="pivotAfter" name="pivot[after]" value="30" />
+          minutes
+        </p>
+      </fieldset>
+    </form>
+  </div>
+
+</body>
+
+</html>

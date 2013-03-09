@@ -1,0 +1,60 @@
+body {
+  color: white;
+  font-family: helvetica;
+  font-size: 2em;
+  background-color: #333;
+}
+
+.screen {
+  width: 88%;
+  position: absolute;
+  font-weight: bold;
+}
+
+#random {
+  position: absolute;
+  top: 1em;
+  width: 50%;
+  font-size: 3em;
+}
+  #wait {
+    font-size: 2em;
+  }
+
+  #chord {
+    position: absolute;
+    height: 6em;
+    width: 50%;
+    left: 50%;
+    background-repeat: no-repeat;
+    font-size: 3em;
+  }
+
+#settings { font-size: 0.5em; }
+
+  #settings fieldset {
+    position: relative;
+    float: left;
+    width: 15%;
+    margin: 1em;
+  }
+    #settings fieldset input {
+      position: absolute;
+      float: right;
+      right: 10%;
+      width: 5em;
+    }
+
+    #settings fieldset #pivotAfter {
+      position: static;
+      float: none;
+    }
+
+#control {
+  position: fixed;
+  right: 0;
+  width: 8%;
+  z-index: 2;
+  padding: 0.2em 0.5em;
+  background-color: #555;
+}
