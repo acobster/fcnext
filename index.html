@@ -1,0 +1,110 @@
+<html>
+
+
+<head>
+
+  <meta charset="utf-8" />
+
+  <link rel="stylesheet" href="style.css" />
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.1/angular.min.js"></script>
+  <script type="text/javascript" src="/next.js"></script>
+
+</head>
+
+<body>
+
+  <p>Next...</p>
+
+  <div id="control">
+    <p id="time">+<span>MINS</span></p>
+    <p>
+      <button id="start" type="button" class="run">Start</button>
+      <button id="stop" type="button" class="run" style="display:none;">Stop</button>
+    </p>
+    <p>
+      <button id="edit" type="button" class="adjust">Adjust</button>
+      <button id="done" type="button" class="adjust" style="display:none;">Done</button>
+    </p>
+    <p>
+      <button id="reset" type="button">Reset</button>
+    </p>
+  </div>
+
+  <div id="main" class="screen" style="display:none;">
+    <div id="random">
+      <div id="wait">WAIT</div>
+      <div id="repeat">REPEAT</div>
+      <div id="sustain">SUSTAIN</div>
+    </div>
+    <div id="chord">CHORD</div>
+  </div>
+
+  <div id="settings" class="screen">
+    <form id="factors">
+      <fieldset>
+        <legend>Wait Times</legend>
+        <p>
+          <label for="interval">Interval</label>
+          <input id="interval" name="wait[interval]" value="5"
+            title="Interval to count by, in seconds" />
+        </p>
+        <p>
+          <label for="minSeconds">Minimum</label>
+          <input id="minSeconds" name="wait[min]" value="10"
+            title="Minimum number of seconds" />
+        </p>
+        <p>
+          <label for="maxSeconds">Maximum</label>
+          <input id="maxSeconds" value="20" name="wait[max]"
+            title="Maximum number of seconds" />
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Repitition</legend>
+        <p>
+          <label for="repeatOdds">Odds</label>
+          <input id="repeatOdds" value="0.8" name="repitition[odds]"
+            title="Odds in 1 that this chord will repeat" />
+        </p>
+        <p>
+          <label for="minRepeats">Minimum</label>
+          <input id="minRepeats" value="10" name="repitition[min]"
+            title="Minimum number of repeats" />
+        </p>
+        <p>
+          <label for="maxRepeats">Maximum</label>
+          <input id="maxRepeats" value="20" name="repitition[max]"
+            title="Maximum number of repeats" />
+        </p>
+      </fieldset>
+
+      <fieldset>
+        <legend>Sustain</legend>
+        <p>
+          <label for="sustainOdds">Odds</label>
+          <input id="sustainOdds" value="0" name="sustain[odds]"
+            title="Odds in 1 that the given chord will sustain" />
+        </p>
+      </fieldset>
+
+      <fieldset id="pivotFactors">
+        <legend>Pivoting</legend>
+        <p>
+          <label for="pivotOdds">Odds</label>
+          <input id="pivotOdds" value="0.7" name="pivot[odds]"
+            title="Odds in 1 that the given chord will pivot" />
+        </p>
+        <p>Always pivot after
+          <input id="pivotAfter" name="pivot[after]" value="30" />
+          minutes
+        </p>
+      </fieldset>
+    </form>
+  </div>
+
+</body>
+
+</html>
