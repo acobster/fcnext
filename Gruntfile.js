@@ -22,14 +22,24 @@ module.exports = function(grunt) {
       unit: {
         configFile: 'test/karma.conf.js'
       }
+    },
+    gitclone: {
+      clone: {
+        options: {
+          repository: 'https://github.com/0xfe/vextab.git',
+          branch: 'master',
+          directory: 'vendor/vextab'
+        }
+      }
     }
   });
 
   // These plugins provide necessary tasks.
   grunt.loadNpmTasks('grunt-bower-task');
   grunt.loadNpmTasks('grunt-karma');
+  grunt.loadNpmTasks('grunt-git');
 
   // Default task.
-  grunt.registerTask('default', ['bower']);
+  grunt.registerTask('default', ['bower', 'gitclone']);
 
 };
