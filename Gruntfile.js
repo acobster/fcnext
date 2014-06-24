@@ -31,6 +31,16 @@ module.exports = function(grunt) {
           directory: 'vendor/vextab'
         }
       }
+    },
+    exec: {
+      npm_install: {
+        cwd: 'vendor/vextab',
+        command: 'npm install'
+      },
+      bundle_install: {
+        cwd: 'vendor/vextab',
+        command: 'bundle install'
+      }
     }
   });
 
@@ -38,8 +48,9 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-bower-task');
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-git');
+  grunt.loadNpmTasks('grunt-exec');
 
   // Default task.
-  grunt.registerTask('default', ['bower', 'gitclone']);
+  grunt.registerTask('default', ['bower', 'gitclone', 'exec', 'karma']);
 
 };
