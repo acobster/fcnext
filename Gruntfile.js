@@ -14,7 +14,8 @@ module.exports = function(grunt) {
     bower: {
       install: {
         options: {
-          targetDir: "./bower_components"
+          targetDir: "./lib",
+          cleanup: true
         }
       }
     },
@@ -28,17 +29,17 @@ module.exports = function(grunt) {
         options: {
           repository: 'https://github.com/0xfe/vextab.git',
           branch: 'master',
-          directory: 'vendor/vextab'
+          directory: 'lib/vextab'
         }
       }
     },
     exec: {
       npm_install: {
-        cwd: 'vendor/vextab',
+        cwd: 'lib/vextab',
         command: 'npm install'
       },
       bundle_install: {
-        cwd: 'vendor/vextab',
+        cwd: 'lib/vextab',
         command: 'bundle install'
       }
     }
