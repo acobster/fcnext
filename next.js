@@ -1,3 +1,5 @@
+'use strict';
+
 angular
   .module( 'NextApp', [] )
     .controller( 'NextCtrl', ['$scope', function( $scope ) {
