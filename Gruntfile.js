@@ -32,13 +32,6 @@ module.exports = function(grunt) {
           directory: 'lib/vextab'
         }
       },
-      vexflow: {
-        options: {
-          repository: 'https://github.com/0xfe/vexflow.git',
-          branch: 'master',
-          directory: 'lib/vexflow'
-        }
-      }
     },
     exec: {
       vextab_npm_install: {
@@ -49,14 +42,6 @@ module.exports = function(grunt) {
         cwd: 'lib/vextab',
         command: 'bundle install'
       },
-      vexflow_bundle_install: {
-        cwd: 'lib/vexflow',
-        command: 'bundle install'
-      },
-      vexflow_rake: {
-        cwd: 'lib/vexflow',
-        command: 'rake'
-      }
     }
   });
 
