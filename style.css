@@ -5,6 +5,10 @@ body {
   background-color: #333;
 }
 
+canvas {
+  background-color: white;
+}
+
 .screen {
   width: 88%;
   position: absolute;
