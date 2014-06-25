@@ -42,6 +42,10 @@ module.exports = function(grunt) {
         cwd: 'lib/vextab',
         command: 'bundle install'
       },
+      vextab_rake: {
+        cwd: 'lib/vextab',
+        command: 'rake'
+      },
     }
   });
 
