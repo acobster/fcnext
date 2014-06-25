@@ -14,7 +14,8 @@ describe("NextCtrl:", function() {
 
   it('should initialize scope with proper values', function() {
     expect( scope.time ).toBe(0);
-    expect( scope.chords ).toEqual( [] );
+    expect( scope.chords.length ).toBe(1);
+    expect( scope.chords[0].notation ).toBeDefined();
   });
 
   describe('next():', function() {

@@ -24,11 +24,9 @@
   Stuff goes here...
   {{time}}
 
-  <div class="vex-tabdiv"
-      width=700 scale=1.0 editor="true"
-      editor_width=720 editor_height=220>options scale=1.5
-tabstave notation=true tablature=false clef=treble
-notes (C/4.E/4.G/4.A/4.D/5) $.medium.C6 add9$</div>
+  <div ng-repeat="chord in chords">
+    <vextab chord="chord"></vextab>
+  </div>
 
 </body>
 
