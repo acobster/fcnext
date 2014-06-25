@@ -15,7 +15,7 @@ module.exports = function(grunt) {
       install: {
         options: {
           targetDir: "./lib",
-          cleanup: true
+          cleanBowerDir: true
         }
       }
     },
@@ -25,22 +25,37 @@ module.exports = function(grunt) {
       }
     },
     gitclone: {
-      clone: {
+      vextab: {
         options: {
           repository: 'https://github.com/0xfe/vextab.git',
           branch: 'master',
           directory: 'lib/vextab'
         }
+      },
+      vexflow: {
+        options: {
+          repository: 'https://github.com/0xfe/vexflow.git',
+          branch: 'master',
+          directory: 'lib/vexflow'
+        }
       }
     },
     exec: {
-      npm_install: {
+      vextab_npm_install: {
         cwd: 'lib/vextab',
         command: 'npm install'
       },
-      bundle_install: {
+      vextab_bundle_install: {
         cwd: 'lib/vextab',
         command: 'bundle install'
+      },
+      vexflow_bundle_install: {
+        cwd: 'lib/vexflow',
+        command: 'bundle install'
+      },
+      vexflow_rake: {
+        cwd: 'lib/vexflow',
+        command: 'rake'
       }
     }
   });
