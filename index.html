@@ -24,6 +24,15 @@
   Stuff goes here...
   {{time}}
 
+  <p>
+    <button ng-click="start()" ng-show="!playing" type="button">Start</button>
+    <button ng-click="stop()" ng-show="playing" type="button">Stop</button>
+  </p>
+
+  <p>
+    <button ng-click="addChord()" type="button">+</button>
+  </p>
+
   <div ng-repeat="chord in chords">
     <vextab chord="chord"></vextab>
   </div>

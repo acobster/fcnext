@@ -1,6 +1,6 @@
 'use strict';
 
-describe("NextCtrl:", function() {
+describe("Unit: NextCtrl", function() {
   var $rootScope, nextCtrl, scope;
 
   // Mock our application module
